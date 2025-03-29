@@ -11,29 +11,93 @@
 
 ## 安装与设置
 
-### 依赖安装
+### 前置条件
 
-1. 首先，确保已安装Python 3.8或更高版本
-2. 安装所需依赖:
+- Python 3.8或更高版本
+- pip包管理器
+- 稳定的网络连接（用于安装依赖）
+
+### 详细安装步骤
+
+1. **获取代码**
 
 ```bash
-pip install -r requirements.txt
+# 克隆整个知识库
+git clone https://github.com/0xluluv587/empyrical-mcp-knowledge-base.git
+cd empyrical-mcp-knowledge-base
+```
+
+2. **安装依赖**
+
+```bash
+# 安装所有必要的依赖
+python3 -m pip install -r mcp_server/requirements.txt
+```
+
+或使用项目提供的安装脚本（需要先赋予执行权限）：
+
+```bash
+chmod +x mcp_server/install.sh
+./mcp_server/install.sh
 ```
 
 ### 启动服务
 
-执行以下命令启动MCP服务:
+**重要**：服务必须在正确的目录下启动，否则会出现模块导入错误。
 
 ```bash
-uvicorn empyrical_mcp_server:app --host 0.0.0.0 --port 8000
+# 在项目根目录下启动服务（开发模式，带自动重载）
+cd empyrical-mcp-knowledge-base  # 确保在项目根目录
+python3 -m uvicorn mcp_server.empyrical_mcp_server:app --reload
 ```
 
-## 在Cursor中配置为MCP服务
-
-要将此服务配置为Cursor IDE中的MCP服务，请使用Cursor的MCP安装工具:
+生产环境启动方式：
 
 ```bash
-npx @cursor/cursor-installer add-to-cursor-config --name "Empyrical MCP" --command "python" --args "mcp_server/empyrical_mcp_server.py"
+python3 -m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000
+```
+
+#### 启动常见问题
+
+如果遇到 `ModuleNotFoundError: No module named 'mcp_server'` 错误，这通常是因为命令运行的位置不正确。请确保：
+
+1. 你在项目根目录（empyrical-mcp-knowledge-base）下运行命令，而不是在mcp_server子目录内
+2. 使用模块导入方式启动服务（`python3 -m uvicorn`）
+3. 模块路径正确（`mcp_server.empyrical_mcp_server:app`）
+
+## 在Cursor中配置
+
+### 方法一：手动配置（推荐）
+
+1. 打开Cursor IDE
+2. 点击"设置"（或按下Ctrl+,）
+3. 搜索"MCP"或导航至"MCP服务"设置部分
+4. 点击"添加MCP服务"按钮
+5. 填写以下信息：
+   - 名称：Empyrical MCP
+   - 命令：python3
+   - 参数：-m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000
+   - 工作目录：选择empyrical-mcp-knowledge-base目录的完整路径
+
+### 方法二：命令行配置（如果Cursor安装工具可用）
+
+```bash
+# 确保在项目根目录
+cd empyrical-mcp-knowledge-base
+
+# 使用Cursor安装工具添加MCP服务
+npx @cursor/cursor-installer add-to-cursor-config --name "Empyrical MCP" --command "python3" --args "-m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000" --path "$(pwd)"
+```
+
+## 验证服务
+
+使用以下命令验证服务是否正常运行：
+
+```bash
+# 健康检查
+curl http://127.0.0.1:8000/
+
+# 应返回: {"status":"ok","service":"Empyrical MCP Server","version":"1.0.0"}
 ```
 
 ## 可用方法
@@ -59,7 +123,18 @@ npx @cursor/cursor-installer add-to-cursor-config --name "Empyrical MCP" --comma
 
 以下是通过curl发送MCP请求的示例:
 
-### 1. 计算夏普比率
+### 1. 获取可用指标列表
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{
+  "jsonrpc": "2.0", 
+  "method": "get_available_metrics", 
+  "params": {}, 
+  "id": 1
+}' http://127.0.0.1:8000/
+```
+
+### 2. 计算夏普比率
 
 ```bash
 curl -X POST -H "Content-Type: application/json" -d '{
@@ -72,10 +147,10 @@ curl -X POST -H "Content-Type: application/json" -d '{
     "annualization": 252
   }, 
   "id": 1
-}' http://localhost:8000/
+}' http://127.0.0.1:8000/
 ```
 
-### 2. 计算最大回撤
+### 3. A计算最大回撤
 
 ```bash
 curl -X POST -H "Content-Type: application/json" -d '{
@@ -85,7 +160,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
     "returns": [0.01, 0.02, 0.03, -0.4, -0.06, -0.02, 0.1, 0.05]
   }, 
   "id": 2
-}' http://localhost:8000/
+}' http://127.0.0.1:8000/
 ```
 
 ## 参数说明
@@ -98,15 +173,26 @@ curl -X POST -H "Content-Type: application/json" -d '{
 - `required_return`: 最低要求收益率，默认为0
 - `cutoff`: 风险价值(VaR)的置信水平，默认为0.05
 
-## 错误处理
+## 常见问题排查
 
-服务遵循标准JSON-RPC 2.0错误处理协议，常见错误代码包括:
+1. **服务无法启动**：
+   - 检查Python版本是否为3.8或更高
+   - 确认所有依赖是否正确安装
+   - 查看日志中的具体错误信息
 
-- `-32700`: 解析错误
-- `-32600`: 无效请求
-- `-32601`: 方法不存在
-- `-32602`: 无效参数
-- `-32603`: 内部错误
+2. **连接被拒绝**：
+   - 确保服务已成功启动
+   - 检查使用的IP和端口是否正确
+   - 确认防火墙设置不会阻止连接
+
+3. **计算结果异常**：
+   - 检查输入数据格式是否正确
+   - 确认参数值在合理范围内
+   - 参考Empyrical库文档验证计算方法
+
+## 在AI模型中使用
+
+配置完成后，AI模型可以通过MCP协议无缝调用所有金融指标计算函数。服务遵循标准JSON-RPC 2.0协议，支持AI模型高效地进行复杂金融分析。
 
 ## 与知识库集成
 
