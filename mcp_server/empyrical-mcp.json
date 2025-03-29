@@ -1,0 +1,262 @@
+{
+  "description": "Empyrical金融指标MCP服务",
+  "jsonrpc": {
+    "command": "python3",
+    "args": ["-m", "uvicorn", "mcp_server.empyrical_mcp_server:app", "--host", "0.0.0.0", "--port", "8001"],
+    "cwd": "/Users/lockie/Coding/empyrical-mcp-knowledge-base",
+    "url": "http://localhost:8001",
+    "methods": {
+      "mcp_empyrical_annual_return": {
+        "name": "annual_return",
+        "description": "计算投资组合的年化收益率",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            },
+            "annualization": {
+              "description": "年化系数",
+              "type": "number"
+            }
+          },
+          "required": ["returns"]
+        }
+      },
+      "mcp_empyrical_max_drawdown": {
+        "name": "max_drawdown",
+        "description": "计算投资组合的最大回撤",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            }
+          },
+          "required": ["returns"]
+        }
+      },
+      "mcp_empyrical_sharpe_ratio": {
+        "name": "sharpe_ratio",
+        "description": "计算投资组合的夏普比率",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "risk_free": {
+              "description": "无风险收益率",
+              "type": "number"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            },
+            "annualization": {
+              "description": "年化系数",
+              "type": "number"
+            }
+          },
+          "required": ["returns"]
+        }
+      },
+      "mcp_empyrical_sortino_ratio": {
+        "name": "sortino_ratio",
+        "description": "计算投资组合的索提诺比率",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "required_return": {
+              "description": "要求的最低收益率",
+              "type": "number"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            },
+            "annualization": {
+              "description": "年化系数",
+              "type": "number"
+            }
+          },
+          "required": ["returns"]
+        }
+      },
+      "mcp_empyrical_calmar_ratio": {
+        "name": "calmar_ratio",
+        "description": "计算投资组合的卡玛比率",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            },
+            "annualization": {
+              "description": "年化系数",
+              "type": "number"
+            }
+          },
+          "required": ["returns"]
+        }
+      },
+      "mcp_empyrical_alpha_beta": {
+        "name": "alpha_beta",
+        "description": "计算投资组合的阿尔法和贝塔值",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "factor_returns": {
+              "description": "基准收益率数据序列",
+              "type": "array"
+            },
+            "risk_free": {
+              "description": "无风险收益率",
+              "type": "number"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            },
+            "annualization": {
+              "description": "年化系数",
+              "type": "number"
+            }
+          },
+          "required": ["returns", "factor_returns"]
+        }
+      },
+      "mcp_empyrical_annual_volatility": {
+        "name": "annual_volatility",
+        "description": "计算投资组合的年化波动率",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            },
+            "alpha": {
+              "description": "波动率计算参数",
+              "type": "number"
+            },
+            "annualization": {
+              "description": "年化系数",
+              "type": "number"
+            }
+          },
+          "required": ["returns"]
+        }
+      },
+      "mcp_empyrical_information_ratio": {
+        "name": "information_ratio",
+        "description": "计算投资组合的信息比率",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "factor_returns": {
+              "description": "基准收益率数据序列",
+              "type": "array"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            }
+          },
+          "required": ["returns", "factor_returns"]
+        }
+      },
+      "mcp_empyrical_downside_risk": {
+        "name": "downside_risk",
+        "description": "计算投资组合的下行风险",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "required_return": {
+              "description": "要求的最低收益率",
+              "type": "number"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            },
+            "annualization": {
+              "description": "年化系数",
+              "type": "number"
+            }
+          },
+          "required": ["returns"]
+        }
+      },
+      "mcp_empyrical_tracking_error": {
+        "name": "tracking_error",
+        "description": "计算投资组合相对于基准的跟踪误差",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "factor_returns": {
+              "description": "基准收益率数据序列",
+              "type": "array"
+            },
+            "period": {
+              "description": "数据周期，如daily、monthly、yearly",
+              "type": "string"
+            }
+          },
+          "required": ["returns", "factor_returns"]
+        }
+      },
+      "mcp_empyrical_value_at_risk": {
+        "name": "value_at_risk",
+        "description": "计算投资组合的风险价值(VaR)",
+        "parameters": {
+          "properties": {
+            "returns": {
+              "description": "收益率数据序列",
+              "type": "array"
+            },
+            "cutoff": {
+              "description": "置信水平，默认0.05",
+              "type": "number"
+            }
+          },
+          "required": ["returns"]
+        }
+      },
+      "mcp_empyrical_get_available_metrics": {
+        "name": "get_available_metrics",
+        "description": "获取所有可用的指标函数列表",
+        "parameters": {
+          "properties": {},
+          "required": []
+        }
+      }
+    }
+  }
+}
