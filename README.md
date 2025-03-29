@@ -56,56 +56,115 @@
 - 提供RESTful API接口
 - 易于集成到AI助手和应用程序中
 
-### 快速开始
+### 安装指南
 
-完整的MCP服务代码和文档位于[mcp_server](mcp_server/)目录下。
+#### 1. 前置条件
 
-#### 安装
+确保系统已安装以下软件：
+- Python 3.8或更高版本
+- pip包管理器
+
+#### 2. 获取代码
 
 ```bash
 # 克隆仓库
 git clone https://github.com/0xluluv587/empyrical-mcp-knowledge-base.git
-cd empyrical-mcp-knowledge-base/mcp_server
-
-# 安装依赖
-pip install -r requirements.txt
-
-# 或使用安装脚本
-chmod +x install.sh
-./install.sh
+cd empyrical-mcp-knowledge-base
 ```
 
-#### 启动服务
+#### 3. 安装依赖
 
 ```bash
-uvicorn empyrical_mcp_server:app --host 0.0.0.0 --port 8000
+# 安装所有必要的依赖
+python3 -m pip install -r mcp_server/requirements.txt
+
+# 或使用安装脚本（需要先赋予执行权限）
+chmod +x mcp_server/install.sh
+./mcp_server/install.sh
 ```
 
-#### 在Cursor中配置MCP服务
+### 启动服务
+
+**重要**：必须在正确目录下启动服务，否则将出现模块导入错误。
 
 ```bash
-npx @cursor/cursor-installer add-to-cursor-config --name "Empyrical MCP" --command "python" --args "$(pwd)/empyrical_mcp_server.py"
+# 在项目根目录下启动服务（开发模式，自动重载）
+cd empyrical-mcp-knowledge-base  # 确保在项目根目录
+python3 -m uvicorn mcp_server.empyrical_mcp_server:app --reload
+
+# 生产环境启动方式
+python3 -m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000
 ```
 
-#### 测试服务
+### 在Cursor中配置MCP服务
+
+#### 方法一：手动配置（推荐）
+
+1. 打开Cursor IDE
+2. 点击"设置"（或按下Ctrl+,）
+3. 搜索"MCP"或导航至"MCP服务"设置部分
+4. 点击"添加MCP服务"按钮
+5. 填写以下信息：
+   - 名称：Empyrical MCP
+   - 命令：python3
+   - 参数：-m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000
+   - 工作目录：选择empyrical-mcp-knowledge-base目录的完整路径
+
+#### 方法二：命令行配置（如果Cursor安装工具可用）
 
 ```bash
-# 运行测试脚本
-python test_mcp_service.py
+# 确保在项目根目录
+cd empyrical-mcp-knowledge-base
+
+# 使用Cursor安装工具添加MCP服务
+npx @cursor/cursor-installer add-to-cursor-config --name "Empyrical MCP" --command "python3" --args "-m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000" --path "$(pwd)"
 ```
 
-### 详细文档
+### 验证服务是否正常运行
 
-更多关于MCP服务的详细信息，包括API参考、使用示例和测试方法，请参阅[MCP服务文档](mcp_server/README.md)。
+```bash
+# 健康检查
+curl http://127.0.0.1:8000/
+
+# 获取可用的指标列表
+curl -X POST -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "method": "get_available_metrics", "params": {}, "id": 1}' http://127.0.0.1:8000/
+
+# 测试夏普比率计算
+curl -X POST -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "method": "sharpe_ratio", "params": {"returns": [0.01, -0.02, 0.03, 0.01, -0.01, 0.02], "risk_free": 0.0}, "id": 1}' http://127.0.0.1:8000/
+```
+
+### 注意事项
+
+- 确保在**项目根目录**（empyrical-mcp-knowledge-base）下启动服务，而不是在mcp_server子目录下
+- 使用模块导入方式启动（`python3 -m uvicorn`），而不是直接执行脚本
+- 如果遇到连接问题，检查端口是否已被占用，可尝试更改端口号
+
+### 可用方法
+
+服务提供多种金融指标计算方法，完整列表和参数说明请参阅[MCP服务文档](mcp_server/README.md)。
 
 ## 示例数据
 
 项目提供了数据生成工具，用于生成测试和演示用的金融数据：
 
 ```bash
-cd mcp_server
-python example_data_generator.py
+cd empyrical-mcp-knowledge-base
+python3 -m mcp_server.example_data_generator
 ```
+
+## 常见问题排查
+
+1. **模块导入错误**：如果出现`ModuleNotFoundError: No module named 'mcp_server'`，请确保在项目根目录下运行命令。
+
+2. **连接被拒绝**：如果出现`ConnectionRefusedError: [Errno 61] Connection refused`，请确保服务已成功启动，并检查IP和端口配置。
+
+3. **依赖安装问题**：如果遇到依赖冲突，建议创建专用虚拟环境：
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate  # Linux/Mac
+   # 或 .venv\Scripts\activate  # Windows
+   pip install -r mcp_server/requirements.txt
+   ```
 
 ## 许可证
 
