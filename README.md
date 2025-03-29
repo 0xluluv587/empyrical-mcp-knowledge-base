@@ -199,3 +199,98 @@ python3 -m mcp_server.example_data_generator
 ## 许可证
 
 该项目采用MIT许可证。详细信息请参阅[LICENSE](LICENSE)文件。
+
+# Empyrical MCP 服务
+
+这是一个基于Model Context Protocol（MCP）的服务，提供对[Empyrical](https://github.com/quantopian/empyrical)金融指标计算库的访问。
+
+## 功能概述
+
+此服务使AI助手（如Claude）能够计算各种金融和投资组合分析指标，包括：
+
+- 年化收益率
+- 夏普比率
+- 索提诺比率
+- 最大回撤
+- 阿尔法/贝塔
+- 信息比率
+- 卡玛比率
+- 年化波动率
+- 下行风险
+- 跟踪误差
+- 风险价值(VaR)
+
+## 快速开始
+
+### 方法一：使用Docker（推荐）
+
+```bash
+# 克隆仓库
+git clone https://github.com/0xluluv587/empyrical-mcp-knowledge-base.git
+cd empyrical-mcp-knowledge-base
+
+# 运行设置脚本
+./run_mcp_server.sh
+```
+
+### 方法二：使用npx
+
+```bash
+# 直接通过npx运行（从本地目录）
+npx /path/to/empyrical-mcp-knowledge-base
+
+# 或者在仓库目录中运行
+cd empyrical-mcp-knowledge-base
+npm start
+```
+
+### 方法三：手动运行Python服务
+
+```bash
+# 安装依赖
+pip install fastapi uvicorn pandas numpy empyrical
+
+# 运行服务
+cd empyrical-mcp-knowledge-base
+python -m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8001
+```
+
+## 在Cursor中使用
+
+服务启动后，重启Cursor，然后就可以在Claude对话中使用以下函数：
+
+- `mcp_empyrical_annual_return` - 计算年化收益率
+- `mcp_empyrical_sharpe_ratio` - 计算夏普比率 
+- `mcp_empyrical_max_drawdown` - 计算最大回撤
+
+示例提示：
+```
+请使用empyrical服务计算以下收益率数据的夏普比率:
+[0.01, -0.02, 0.03, 0.01, -0.01, 0.02]
+无风险收益率为0.001
+```
+
+## API参考
+
+服务提供JSON-RPC API，端点为 `http://localhost:8001/`。
+
+示例请求：
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "sharpe_ratio",
+  "params": {
+    "returns": [0.01, -0.02, 0.03, 0.01, -0.01, 0.02],
+    "risk_free": 0.001
+  },
+  "id": 1
+}
+```
+
+## 故障排除
+
+如果MCP服务无法正常工作：
+
+1. 确保服务正在运行 (`curl http://localhost:8001/` 应返回服务信息)
+2. 检查Cursor日志 (`~/Library/Logs/Claude/mcp.log` 和 `~/Library/Logs/Claude/mcp-server-empyrical_mcp.log`)
+3. 重新运行设置脚本并重启Cursor
