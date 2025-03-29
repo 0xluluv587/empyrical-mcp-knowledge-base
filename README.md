@@ -12,6 +12,8 @@
 - [贝塔 (Beta)](docs/alpha_beta.md#贝塔-beta) - 相对于市场的系统性风险
 - [最大回撤 (Maximum Drawdown)](docs/max_drawdown.md) - 最大损失幅度
 - [波动率 (Volatility)](docs/volatility.md) - 收益率的标准差
+- [下行风险 (Downside Risk)](docs/downside_risk.md) - 只考虑低于目标收益的风险
+- [跟踪误差 (Tracking Error)](docs/tracking_error.md) - 相对于基准的偏离程度
 - [风险价值 (Value at Risk, VaR)](docs/value_at_risk.md) - 特定置信水平下的最大潜在损失
 
 ### 风险调整后收益指标
@@ -48,6 +50,19 @@ result = sharpe_ratio(daily_returns, risk_free=risk_free_rate,
 
 print(f"夏普比率: {result}")
 ```
+
+## 常见指标使用场景
+
+| 指标类型 | 适用场景 |
+|---------|---------|
+| 年化收益率 | 评估投资的总体表现 |
+| 波动率 | 评估投资的总体风险 |
+| 夏普比率 | 评估考虑风险因素后的整体表现 |
+| 最大回撤 | 评估极端下行风险 |
+| 阿尔法/贝塔 | 评估相对于市场的表现和风险 |
+| 信息比率 | 评估主动管理能力 |
+| 索提诺比率 | 特别关注下行风险的投资评估 |
+| 跟踪误差 | 评估指数基金或主动型基金的偏离风险 |
 
 ## 贡献指南
 
