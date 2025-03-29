@@ -98,7 +98,47 @@ python3 -m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 800
 
 ### 在Cursor中配置MCP服务
 
-#### 方法一：手动配置（推荐）
+#### 方法一：直接编辑mcp.json配置文件（推荐）
+
+最新版本的Claude需要通过直接编辑mcp.json文件来配置MCP服务：
+
+1. 找到Cursor的配置目录：
+   - macOS: `~/Library/Application Support/Cursor/mcp.json`
+   - Windows: `%APPDATA%\Cursor\mcp.json`
+   - Linux: `~/.config/Cursor/mcp.json`
+
+2. 如果mcp.json文件不存在，创建该文件
+
+3. 编辑mcp.json文件，添加以下内容：
+
+```json
+{
+  "servers": [
+    {
+      "name": "Empyrical MCP",
+      "command": "python3",
+      "args": [
+        "-m",
+        "uvicorn",
+        "mcp_server.empyrical_mcp_server:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ],
+      "cwd": "/完整路径/empyrical-mcp-knowledge-base"
+    }
+  ]
+}
+```
+
+4. 将上面的`"/完整路径/empyrical-mcp-knowledge-base"`替换为你实际的项目路径
+   - macOS/Linux示例: `"/Users/username/Coding/empyrical-mcp-knowledge-base"`
+   - Windows示例: `"C:\\Users\\username\\Coding\\empyrical-mcp-knowledge-base"`
+
+5. 保存文件后重启Cursor IDE
+
+#### 方法二：手动配置（如果GUI支持）
 
 1. 打开Cursor IDE
 2. 点击"设置"（或按下Ctrl+,）
@@ -110,7 +150,7 @@ python3 -m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 800
    - 参数：-m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000
    - 工作目录：选择empyrical-mcp-knowledge-base目录的完整路径
 
-#### 方法二：命令行配置（如果Cursor安装工具可用）
+#### 方法三：命令行配置（如果Cursor安装工具可用）
 
 ```bash
 # 确保在项目根目录
