@@ -98,24 +98,24 @@ python3 -m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 800
 
 ### 在Cursor中配置MCP服务
 
-#### 方法一：直接编辑mcp.json配置文件（推荐）
+#### 方法一：编辑mcp.json配置（推荐方式）
 
-最新版本的Claude需要通过直接编辑mcp.json文件来配置MCP服务：
+Cursor使用`mcp.json`文件来管理MCP服务。按照以下步骤添加Empyrical服务：
 
-1. 找到Cursor的配置目录：
-   - macOS: `~/Library/Application Support/Cursor/mcp.json`
+1. 找到并打开Cursor配置目录下的mcp.json文件：
+   - macOS: `~/.cursor/mcp.json` 或 `~/Library/Application Support/Cursor/mcp.json`
    - Windows: `%APPDATA%\Cursor\mcp.json`
    - Linux: `~/.config/Cursor/mcp.json`
 
-2. 如果mcp.json文件不存在，创建该文件
-
-3. 编辑mcp.json文件，添加以下内容：
+2. 在`mcpServers`对象中添加Empyrical MCP服务配置：
 
 ```json
 {
-  "servers": [
-    {
-      "name": "Empyrical MCP",
+  "mcpServers": {
+    // 其他现有服务配置...
+    
+    "empyrical_mcp": {
+      "isActive": true,
       "command": "python3",
       "args": [
         "-m",
@@ -126,17 +126,17 @@ python3 -m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 800
         "--port",
         "8000"
       ],
-      "cwd": "/完整路径/empyrical-mcp-knowledge-base"
+      "cwd": "/YOUR_PATH/empyrical-mcp-knowledge-base"
     }
-  ]
+  }
 }
 ```
 
-4. 将上面的`"/完整路径/empyrical-mcp-knowledge-base"`替换为你实际的项目路径
-   - macOS/Linux示例: `"/Users/username/Coding/empyrical-mcp-knowledge-base"`
-   - Windows示例: `"C:\\Users\\username\\Coding\\empyrical-mcp-knowledge-base"`
+3. 将`/YOUR_PATH/empyrical-mcp-knowledge-base`替换为你的实际项目路径
+   - macOS/Linux示例: `/Users/username/Coding/empyrical-mcp-knowledge-base`
+   - Windows示例: `C:\\Users\\username\\Coding\\empyrical-mcp-knowledge-base`
 
-5. 保存文件后重启Cursor IDE
+4. 保存文件并重启Cursor IDE
 
 #### 方法二：手动配置（如果GUI支持）
 
@@ -145,20 +145,10 @@ python3 -m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 800
 3. 搜索"MCP"或导航至"MCP服务"设置部分
 4. 点击"添加MCP服务"按钮
 5. 填写以下信息：
-   - 名称：Empyrical MCP
+   - 名称：empyrical_mcp
    - 命令：python3
    - 参数：-m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000
    - 工作目录：选择empyrical-mcp-knowledge-base目录的完整路径
-
-#### 方法三：命令行配置（如果Cursor安装工具可用）
-
-```bash
-# 确保在项目根目录
-cd empyrical-mcp-knowledge-base
-
-# 使用Cursor安装工具添加MCP服务
-npx @cursor/cursor-installer add-to-cursor-config --name "Empyrical MCP" --command "python3" --args "-m uvicorn mcp_server.empyrical_mcp_server:app --host 0.0.0.0 --port 8000" --path "$(pwd)"
-```
 
 ### 验证服务是否正常运行
 
