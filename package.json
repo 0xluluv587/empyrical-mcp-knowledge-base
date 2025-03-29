@@ -1,0 +1,23 @@
+{
+  "name": "empyrical-mcp-server",
+  "version": "1.0.0",
+  "description": "Empyrical金融指标计算MCP服务",
+  "main": "index.js",
+  "bin": {
+    "empyrical-mcp-server": "./npx-wrapper.js"
+  },
+  "scripts": {
+    "start": "node npx-wrapper.js"
+  },
+  "keywords": [
+    "empyrical",
+    "mcp",
+    "finance",
+    "quant"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+} 
